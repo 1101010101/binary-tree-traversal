@@ -1,0 +1,199 @@
+//实现二叉树的先序、中序、后序遍历，包括递归方式和非递归方式
+#include<iostream>
+#include<stdlib.h>
+#include<stack>
+using namespace std;
+
+class node
+{
+public:
+    int value;
+    node *left;
+    node *right;
+    node(int data)
+    {
+        this->value = data;
+    }
+};
+
+void preOrderRecur(node *head)//先序递归
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    cout << head->value << " ";
+    preOrderRecur(head->left);
+    preOrderRecur(head->right);
+}
+
+void inOrderRecur(node *head)//中序递归
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    inOrderRecur(head->left);
+    cout << head->value << " ";
+    inOrderRecur(head->right);
+}
+
+void postOrderRecur(node *head)//后序序递归
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    postOrderRecur(head->left);
+    postOrderRecur(head->right);
+    cout << head->value << " ";
+}
+
+void preOrderUnrecur(node *head)//先序非递归
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    stack<node*> Stack;
+    Stack.push(head);
+    while (!Stack.empty())
+    {
+        head = Stack.top();
+        Stack.pop();
+        cout << head->value << " ";
+        if (head->right != NULL)
+        {
+            Stack.push(head->right);
+        }
+        if (head->left != NULL)
+        {
+            Stack.push(head->left);
+        }
+    }
+    cout << endl;
+}
+
+void inOrderUnrecur(node *head)//中序非递归
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    stack<node*> Stack;
+    while (!Stack.empty() || head != NULL)
+    {
+        if (head != NULL)
+        {
+            Stack.push(head);
+            head = head->left;
+        }
+        else
+        {
+            head = Stack.top();
+            Stack.pop();
+            cout << head->value << " ";
+            head = head->right;
+        }
+    }
+    cout << endl;
+}
+
+void postOrderUnrecur1(node *head)//后序非递归(用两个栈)
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    stack<node*> Stack1;
+    stack<node*> Stack2;
+    Stack1.push(head);
+    while (!Stack1.empty())
+    {
+        head = Stack1.top();
+        Stack1.pop();
+        Stack2.push(head);
+        if (head->left != NULL)
+        {
+            Stack1.push(head->left);
+        }
+        if (head->right != NULL)
+        {
+            Stack1.push(head->right);
+        }
+    }
+    while (!Stack2.empty())
+    {
+        cout << Stack2.top()->value << " ";
+        Stack2.pop();
+    }
+    cout << endl;
+}
+
+void postOrderUnrecur2(node *head)//后序非递归(用一个栈)
+{
+    if (head == NULL)
+    {
+        return;
+    }
+    stack<node*> Stack;
+    Stack.push(head);
+    node *c = NULL;
+    while (!Stack.empty())
+    {
+        c = Stack.top();
+        if (c->left != NULL && head != c->right&&head != c->left)
+        {
+            Stack.push(c->left);
+        }
+        else if (c->right != NULL && head != c->right)
+        {
+            Stack.push(c->right);
+        }
+        else
+        {
+            cout << Stack.top()->value << " ";
+            Stack.pop();
+            head = c;
+        }
+    }
+    cout << endl;
+}
+
+int main()
+{
+    node *head = new node(5);
+    head->left = new node(3);
+    head->right = new node(8);
+    head->left->left = new node(2);
+    head->left->right = new node(4);
+    head->left->left->left = new node(1);
+    head->right->left = new node(7);
+    head->right->left->left = new node(6);
+    head->right->right = new node(10);
+    head->right->right->left = new node(9);
+    head->right->right->right = new node(11);
+
+    cout << "====================recursive=====================" << endl;
+    cout << "pre-order:" << endl;
+    preOrderRecur(head);
+    cout << endl;
+    cout << "in-order: " << endl;
+    inOrderRecur(head);
+    cout << endl;
+    cout << "post-order: " << endl;
+    postOrderRecur(head);
+    cout << endl;
+
+    cout << "====================unrecursive=====================" << endl;
+    cout << "pre-order:" << endl;
+    preOrderUnrecur(head);
+    cout << "in-order: " << endl;
+    inOrderUnrecur(head);
+    cout << "post-order1: " << endl;
+    postOrderUnrecur1(head);
+    cout << "post-order2: " << endl;
+    postOrderUnrecur2(head);
+    system("pause");
+    return 0;
+}
